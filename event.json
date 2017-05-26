@@ -1,0 +1,27 @@
+{
+    "body-json": {
+        "entry": [
+            {
+                "id": "462452910512354",
+                "time": 1495806261017,
+                "messaging": [
+                    {
+                        "sender": {
+                            "id": "00001"
+                        },
+                        "recipient": {
+                            "id": "00002"
+                        },
+                        "timestamp": 1495806231828,
+                        "message": {
+                            "is_echo": true,
+                            "mid": "mid.local",
+                            "seq": 15167,
+                            "text": "Helsinki"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
