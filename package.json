@@ -1,12 +1,18 @@
 {
-  "name": "facebook-chatbot",
+  "name": "aws-lambda-atlas-facebook-chatbot",
   "version": "1.0.0",
-  "description": "",
+  "description": "A sample Facebook chat bot integrating MongoDB Atlas, AWS Lambda and Yahoo! Weather",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": ["mongodb;atlas;aws;lambda;facebook;yahoo;bot"],
+  "author": " Raphael Londner",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "assert": "^1.4.1",
+    "https": "^1.0.0",
+    "mongodb": "^2.2.27",
+    "request": "^2.81.0"
+  }
 }

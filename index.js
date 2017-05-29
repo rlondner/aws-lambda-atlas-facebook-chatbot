@@ -5,19 +5,16 @@ var https = require("https");
 var request = require("request");
 var MongoClient = require("mongodb").MongoClient;
 
-var facebookPageToken = process.env["PAGE_TOKEN"];
+var facebookPageToken = process.env["FACEBOOK_PAGE_TOKEN"];
 var VERIFY_TOKEN = "mongodb_atlas_token";
 var mongoDbUri = process.env["MONGODB_ATLAS_CLUSTER_URI"];
 
 let cachedDb = null;
 
 exports.handler = (event, context, callback) => {
-  var httpMethod;
-
-  console.log("Page token is: " + facebookPageToken);
-
-  //the following line is critical for performance reasons to allow re-use of database connections across calls to this Lambda function and avoid closing the database connection. The first call to this lambda function takes about 5 seconds to complete, while subsequent, close calls will only take a few hundred milliseconds.
   context.callbackWaitsForEmptyEventLoop = false;
+
+  var httpMethod;
 
   if (event.context != undefined) {
     httpMethod = event.context["http-method"];
@@ -26,8 +23,7 @@ exports.handler = (event, context, callback) => {
     httpMethod = "PUT";
   }
 
-  console.log("HTTP method is " + httpMethod);
-  // process GET request
+  // process GET request (for Facebook validation)
   if (httpMethod === "GET") {
     console.log("In Get if loop");
     var queryParams = event.params.querystring;
@@ -39,7 +35,7 @@ exports.handler = (event, context, callback) => {
       callback(null, "Error, wrong validation token");
     }
   } else {
-    // process POST request
+    // process POST request (Facebook chat messages)
     var messageEntries = event["body-json"].entry;
     console.log("message entries are " + JSON.stringify(messageEntries));
     for (var entryIndex in messageEntries) {
@@ -49,6 +45,7 @@ exports.handler = (event, context, callback) => {
         var sender = messageEnvelope.sender.id;
         if (messageEnvelope.message && messageEnvelope.message.text) {
           var onlyStoreinAtlas = false;
+          //the weather response the function sends sendTextMessage comes back to Lambda as an echo and in this case, we only want to store it in Atlas, not process it through Yahoo's weather API
           if (
             messageEnvelope.message.is_echo &&
             messageEnvelope.message.is_echo == true
@@ -82,7 +79,7 @@ exports.handler = (event, context, callback) => {
                     "The response to send to Facebook is: " + response
                   );
                   sendTextMessage(sender, response);
-                  storeInMongoDB(messageEnvelope, callback)
+                  storeInMongoDB(messageEnvelope, callback);
                 } catch (err) {
                   console.error(
                     "error while sending a text message or storing in MongoDB: ",
@@ -93,7 +90,7 @@ exports.handler = (event, context, callback) => {
               }
             );
           } else {
-            storeInMongoDB(messageEnvelope, callback)
+            storeInMongoDB(messageEnvelope, callback);
           }
         } else {
           process.exit();
